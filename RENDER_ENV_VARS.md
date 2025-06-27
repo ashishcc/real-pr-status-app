@@ -30,10 +30,10 @@
 - **KEYMAKER_API_URL**: Keymaker API endpoint
 
 ### CORS Configuration
-- **FRONTEND_URL**: Your frontend application URL
-  - Example: `https://your-frontend.onrender.com`
-- **ALLOWED_ORIGINS**: Comma-separated list of allowed origins
-  - Example: `https://your-frontend.onrender.com,https://your-domain.com`
+- **ALLOWED_ORIGINS**: Comma-separated list of additional allowed origins
+  - Example: `https://your-frontend.vercel.app,https://your-domain.com`
+  - Note: Default origins (localhost:8100, localhost:3000, localhost:4200) are already included
+  - The Vercel URL `https://real-pr-status-1z50zxxvt-ashish-cs-projects.vercel.app` is already included
 
 ### Cache Configuration (Optional)
 - **CACHE_TTL**: Cache time-to-live in seconds
