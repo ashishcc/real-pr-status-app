@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: real-pr-status-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile.prod
+    dockerContext: ./
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: CACHE_TTL
+        value: 300
+      - key: CACHE_MAX_SIZE
+        value: 1000
+      - key: AUTH_PROVIDER
+        value: mock
+    healthCheckPath: /
+    autoDeploy: true

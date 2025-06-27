@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: real-pr-status-api
+    ports:
+      - "8000:8000"
+    environment:
+      # GitHub Configuration
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      
+      # JWT Configuration
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your-secret-key-here}
+      
+      # Authentication Mode
+      ENABLE_MOCK_AUTH: ${ENABLE_MOCK_AUTH:-false}
+      
+      # Keymaker API (if required)
+      KEYMAKER_API_KEY: ${KEYMAKER_API_KEY:-}
+      
+    volumes:
+      # Mount app directory for development (optional)
+      # - ./app:/app/app
+      
+      # Mount .env file if you prefer file-based config
+       - ./.env:/app/.env
+      
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits (optional)
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+# Optional: Add networks for isolation
+networks:
+  default:
+    name: pr-tracker-network
