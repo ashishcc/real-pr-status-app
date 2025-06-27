@@ -24,7 +24,8 @@ DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:8100",  # Ionic dev server
     "http://localhost:3000",  # Alternative dev server
     "http://localhost:4200",  # Angular dev server
-    "https://real-pr-status-1z50zxxvt-ashish-cs-projects.vercel.app",  # Vercel production
+    "https://real-pr-status-web.vercel.app",  # Vercel production
+    "https://real-pr-status-1z50zxxvt-ashish-cs-projects.vercel.app",  # Vercel preview
 ]
 
 # Get additional origins from environment variable (comma-separated)
