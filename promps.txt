@@ -1,0 +1,66 @@
+[prompt-0]
+Create a plan to build complete app with backend code in python and frontend code in Ionic. This app maintains a config of developer github names. It fetches all the open
+  pull requests for these developers. From pull request it extracts details: created_at, resolved review comments, unresolved review comments, first review comment date, last
+  review comment date, reviewer names. I don't want any database integration. Python config file should maintain the list of developer github names. I just need a functionality to fetch the open pull request details when button on the front end UI is clicked.
+
+
+[prompt-1]
+can you make github_service.py to look only in https://github.com/Realtyka
+
+[prompt-2]
+can you make the PR number clickable ? for example, #4221 should open corresponding pull request in new window
+
+[prompt-3]
+I want to add last_commented_at field
+  
+[prompt-4]
+rename backend to real-pr-status-app
+
+[prompt-5]
+rename frontend to real-pr-status-web
+
+[prompt-6]
+can you put clickable developer names on the top of the page. When clicked move to that particular developer's section
+
+[prompt-7]
+commit the changes for both real-pr-status-app and real-pr-status-web
+
+[prompt-8]
+change the ionic theme to dark mode and make page more attractive.
+
+[prompt-9]
+commit the changes in real-pr-status-web
+  
+[prompt-10]
+I want to implement SSO on this web app having backend real-pr-status-app and frontend real-pr-status-web. 
+  Take a look at my existing integration with other apps. Here is my swagger endpoint: https://keymaker.team1realbrokerage.com/swagger-ui/index.html Take a look at
+  google-sso-info-by-email-or-username, signin-by-google and signin-with-mfa apis.
+  Also check https://bolt.therealbrokerage.com/login/2fa
+
+[prompt-11]
+in real-pr-status-app, implement cache for github apis with TTL 30 minutes.
+
+[prompt-12]
+Create developer groups. In config.py add the config that maintains group to developers mapping. Then on the top of the page show only groups as clickable buttons. When a group is clicked fetch pull request details for all the developers of that group and show below.
+<example>
+brokerage = ['ankushchoubey-realbrokerage', 'ronak-real']
+marketing-legal = ['vikas-bhosale', 'mohit-chandak-onereal', 'ashishreal']
+leo = ['Shailendra-Singh-OneReal']
+</example>
+
+
+[prompt-13]
+while fetching details of each developer show the name in progress on top
+
+[prompt-14]
+while showing 'Last commented n days ago', add username of the last comment. Make it look like this: 'Last commented by ashishreal 2 days ago'
+
+[prompt-15]
+dockerize real-pr-status-app
+
+[prompt-16]
+when 'test with mock auth (dev only) is clicked, ask user to enter username and password. hard code that username to real-user and password to OneReal@Rocks#
+
+[prompt-17]
+replace this real-pr-status-web/src/assets/icon/favicon.png with the one of https://onereal.com
+
