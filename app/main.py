@@ -11,11 +11,9 @@ from app.models import PRResponse, DeveloperPRs
 from app.github_service import GitHubService
 from app.config import DEVELOPERS, DEVELOPER_GROUPS, ALLOWED_ORIGINS
 from app.auth import (
-    GoogleAuthRequest, AuthResponse, UserInfo, 
-    get_current_user, create_access_token, keymaker_client
+    AuthResponse, UserInfo, 
+    get_current_user, create_access_token
 )
-from app.google_auth import GoogleAuthService, MockAuthService
-from app.keymaker_auth import keymaker_auth_service, GoogleSSOInfo
 from app.cache import cache, cleanup_cache_periodically
 
 # Load environment variables
@@ -81,8 +79,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    await keymaker_client.close()
-    await keymaker_auth_service.close()
+    pass
 
 
 @app.get("/")
@@ -97,62 +94,31 @@ async def root():
 
 # Authentication endpoints
 
-@app.get("/api/auth/check-google-sso", response_model=GoogleSSOInfo)
-async def check_google_sso(email: str):
+from pydantic import BaseModel
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/auth/login", response_model=AuthResponse)
+async def login(request: LoginRequest):
     """
-    Step 1: Check if email is enabled for Google SSO
+    Simple login with hardcoded credentials
     
     Args:
-        email: User's email address
-        
-    Returns:
-        GoogleSSOInfo with googleSsoEnabled and forceGoogleSso flags
-    """
-    return await keymaker_auth_service.check_google_sso_by_email(email)
-
-
-@app.post("/api/auth/google", response_model=AuthResponse)
-async def google_auth(request: GoogleAuthRequest):
-    """
-    Authenticate user via Google SSO
-    
-    Args:
-        request: Contains Google access token
+        request: Login request with username and password
         
     Returns:
         AuthResponse with JWT token and user info
     """
-    try:
-        # Check if mock auth is enabled
-        if os.getenv("ENABLE_MOCK_AUTH", "false").lower() == "true":
-            # Use mock authentication for testing
-            user_data = await MockAuthService.mock_google_login(request.access_token)
-            
-            # Extract user info from mock data
-            user_info = UserInfo(
-                username=user_data.get("username"),
-                email=user_data.get("email"),
-                full_name=user_data.get("fullName"),
-                picture=user_data.get("picture")
-            )
-        else:
-            # Use Keymaker authentication (Step 5 of the flow)
-            keymaker_response = await keymaker_auth_service.signin_by_google(request.access_token)
-            
-            # For now, we'll create a simplified user from the Keymaker response
-            # In production, you might need to fetch additional user details
-            user_info = UserInfo(
-                username=keymaker_response.userId,  # Use userId as username for now
-                email=request.access_token,  # You may need to decode the Google token to get email
-                full_name=None,
-                picture=None
-            )
-            
-            # If 2FA is required, include that info in the response
-            if keymaker_response.forceMfa:
-                # In a real implementation, you would handle 2FA flow
-                logger.info(f"User {keymaker_response.userId} requires 2FA")
-                # For now, we'll proceed without 2FA
+    # Only accept the hardcoded user
+    if request.username == "real-user":
+        user_info = UserInfo(
+            username="real-user",
+            email="real-user@realbrokerage.com",
+            full_name="Real User",
+            picture=None
+        )
         
         # Create JWT token
         access_token = create_access_token(
@@ -164,17 +130,15 @@ async def google_auth(request: GoogleAuthRequest):
         
         return AuthResponse(
             access_token=access_token,
+            token_type="bearer",
             user_info=user_info
         )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Google authentication error: {e}")
+    else:
         raise HTTPException(
-            status_code=500,
-            detail="Authentication failed"
+            status_code=401,
+            detail="Invalid credentials"
         )
+
 
 
 @app.get("/api/auth/me", response_model=UserInfo)
